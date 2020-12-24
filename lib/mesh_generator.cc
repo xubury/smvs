@@ -112,10 +112,9 @@ MeshGenerator::cut_depth_maps(std::vector<mve::FloatImage::Ptr> * depthmaps,
                     float dm_j = depthmaps->at(j)->at(xj, yj, 0);
                     if (dm_j == 0.0)
                         continue;
-
-                    float surface_power_j =
-                        this->view_projs[j].get_surface_power(pos, normal);
-
+                        
+                    if (dm_j * 1.01 < proj[2]) 
+                        continue;
                     /* generate 3D point in neighbor view */
                     math::Vec3f pos_j = mve::geom::pixel_3dpos(xj, yj,
                            cutmaps_j[j]->at(xj, yj, 0), invproj_j);
@@ -123,24 +122,22 @@ MeshGenerator::cut_depth_maps(std::vector<mve::FloatImage::Ptr> * depthmaps,
                     math::Vec3f normal_j(normals_j->at(xj, yj, 0),
                         normals_j->at(xj, yj, 1), normals_j->at(xj, yj, 2));
                     float surface_power_j_j =
-                        this->view_projs[j].get_surface_power(pos_j, normal_j);
+                        this->view_projs[j].get_surface_power(pos,
+                                                              normal_j);
 
-                    if (dm_j * 1.01 < proj[2])
-                        continue;
-
-                    if (dm_j * 0.997 > proj[2])
-                    {
-                        if (surface_power_j_j > 0.5 * surface_power)
-                            consistency -= surface_power_j_j;
-                        continue;
-                    }
-                    if (surface_power_j_j > 2.0 * surface_power
-                        || surface_power_j > 2.0 * surface_power)
+                    if (surface_power_j_j > 2.0 * surface_power) 
                     {
                         cutmaps[i]->at(x, y, 0) = 0.0;
                         break;
                     }
-                    consistency += surface_power_j_j;
+
+                    if (dm_j * 0.997 > proj[2]) 
+                    {
+                        if (surface_power_j_j > 0.5 * surface_power)
+                            consistency -= surface_power_j_j;
+                        else
+                            consistency += surface_power_j_j;
+                    }
                 }
                 if (consistency <= 0)
                     cutmaps[i]->at(x, y, 0) = 0.0;
