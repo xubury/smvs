@@ -135,9 +135,9 @@ MeshGenerator::cut_depth_maps(std::vector<mve::FloatImage::Ptr> * depthmaps,
                     {
                         if (surface_power_j_j > 0.5 * surface_power)
                             consistency -= surface_power_j_j;
-                        else
-                            consistency += surface_power_j_j;
+                        continue;
                     }
+                    consistency += surface_power_j_j;
                 }
                 if (consistency <= 0)
                     cutmaps[i]->at(x, y, 0) = 0.0;
