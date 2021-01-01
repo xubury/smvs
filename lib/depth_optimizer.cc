@@ -118,6 +118,9 @@ DepthOptimizer::optimize (void)
         
         if (this->opts.debug_lvl > 1 && this->lighting != nullptr)
         {
+            mve::FloatImage::Ptr normals = this->surface->get_normal_map(
+                this->main_view->get_inverse_flen());
+            this->main_view->write_image_to_view(normals, "smvs-normal");
             mve::FloatImage::Ptr shaded = this->lighting->render_normal_map(
                 this->get_normals());
             this->main_view->write_image_to_view(shaded, "smvs-shaded");
