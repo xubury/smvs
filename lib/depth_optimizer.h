@@ -39,6 +39,7 @@ public:
         bool use_sgm = false;
         bool full_optimization = false;
         std::string output_name = "smvs";
+        std::string sgm_name = "smvs-sgm";
     };
 
     typedef SSEVector DenseVector;

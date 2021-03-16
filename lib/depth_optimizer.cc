@@ -39,10 +39,10 @@ DepthOptimizer::create_initial_surface (void)
         this->main_view->get_height() / 1.7e6) / 2) + 4, 4.0);
     if (this->opts.use_sgm)
     {
-        mve::FloatImage::Ptr init = this->main_view->get_sgm_depth();
+        mve::FloatImage::Ptr init = this->main_view->get_sgm_depth(opts.sgm_name);
         init = depthmap_bilateral_filter(init, main_view->get_image());
         if(this->opts.debug_lvl > 1)
-            this->main_view->write_depth_to_view(init, "smvs-sgm-filtered");
+            this->main_view->write_depth_to_view(init, this->opts.sgm_name + "-filtered");
         this->surface = Surface::create(bundle, main_view, init_scale, init);
         this->sgm_depth = init;
     }
@@ -115,7 +115,7 @@ DepthOptimizer::optimize (void)
             this->lighting = light_opt.fit_lighting_to_image(
                this->main_view->get_shading_image());
         }
-        
+
         if (this->opts.debug_lvl > 1 && this->lighting != nullptr)
         {
             mve::FloatImage::Ptr normals = this->surface->get_normal_map(
@@ -693,7 +693,7 @@ DepthOptimizer::prepare_correspondences (void)
         main_cam.fill_reprojection(sub_cam, this->main_view->get_width(),
             this->main_view->get_height(), this->sub_views[i]->get_width(),
             this->sub_views[i]->get_height(), *M, *t);
-            
+
         for (int j = 0; j < 9; ++j)
             this->Mi[i][j] = M[j];
         for (int j = 0; j < 3; ++j)
@@ -869,7 +869,7 @@ DepthOptimizer::ncc_for_patch (std::size_t patch_id, std::size_t sub_id)
     math::Vec3d counter(0,0,0);
     math::Vec3d color_main;
     math::Vec3d color_sub;
-    
+
     for (std::size_t i = 0; i < pixels.size(); ++i)
     {
         Correspondence C(this->Mi[sub_id], this->ti[sub_id],

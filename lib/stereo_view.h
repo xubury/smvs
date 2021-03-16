@@ -42,7 +42,7 @@ public:
     mve::FloatImage::ConstPtr get_scaleimage (void) const;
     mve::FloatImage::ConstPtr get_image_gradients (void) const;
     mve::FloatImage::ConstPtr get_image_hessian (void) const;
-    mve::FloatImage::Ptr get_sgm_depth (void) const;
+    mve::FloatImage::Ptr get_sgm_depth (const std::string &name) const;
     mve::FloatImage::ConstPtr get_shading_image (void) const;
     mve::FloatImage::ConstPtr get_shading_gradients (void) const;
     mve::FloatImage::ConstPtr get_linear_image (void) const;
@@ -119,9 +119,9 @@ StereoView::write_depth_to_view(mve::FloatImage::Ptr depth,
 }
 
 inline mve::FloatImage::Ptr
-StereoView::get_sgm_depth (void) const
+StereoView::get_sgm_depth (const std::string &name) const
 {
-    mve::FloatImage::Ptr mve_depth = this->view->get_float_image("smvs-sgm");
+    mve::FloatImage::Ptr mve_depth = this->view->get_float_image(name);
     math::Matrix3f invproj;
     this->get_camera().fill_inverse_calibration(
         *invproj, mve_depth->width(), mve_depth->height());
