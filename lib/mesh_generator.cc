@@ -112,8 +112,8 @@ MeshGenerator::cut_depth_maps(std::vector<mve::FloatImage::Ptr> * depthmaps,
                     float dm_j = depthmaps->at(j)->at(xj, yj, 0);
                     if (dm_j == 0.0)
                         continue;
-                        
-                    if (dm_j * 1.01 < proj[2]) 
+
+                    if (dm_j * 1.01 < proj[2])
                         continue;
                     /* generate 3D point in neighbor view */
                     math::Vec3f pos_j = mve::geom::pixel_3dpos(xj, yj,
@@ -125,13 +125,13 @@ MeshGenerator::cut_depth_maps(std::vector<mve::FloatImage::Ptr> * depthmaps,
                         this->view_projs[j].get_surface_power(pos,
                                                               normal_j);
 
-                    if (surface_power_j_j > 2.0 * surface_power) 
+                    if (surface_power_j_j > 2.0 * surface_power)
                     {
                         cutmaps[i]->at(x, y, 0) = 0.0;
                         break;
                     }
 
-                    if (dm_j * 0.997 > proj[2]) 
+                    if (dm_j * 0.997 > proj[2])
                     {
                         if (surface_power_j_j > 0.5 * surface_power)
                             consistency -= surface_power_j_j;
@@ -211,14 +211,14 @@ MeshGenerator::generate_mesh (mve::Scene::ViewList const& inputviews,
     std::mutex mesh_mutex;
     for (std::size_t i = 0; i < this->views.size(); ++i)
     merge_depth.emplace_back(this->thread_pool.add_task(
-        [this, &mesh_mutex, &image_name, &depthmaps, &normalmaps, i, pset]
+        [this, &mesh_mutex, &image_name, &dm_name, &depthmaps, &normalmaps, i, pset]
     {
         if (this->views[i] == nullptr)
             return;
 
         if (opts.cut_surfaces)
         {
-            this->views[i]->set_image(depthmaps[i], "smvs-cut");
+            this->views[i]->set_image(depthmaps[i], dm_name + "-cut");
             this->views[i]->save_view();
         }
 
